@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import 'semantic-ui-css/semantic.min.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Spinnder from './components/Spinner';
+import SeasonDisplay from './components/SeasonDisplay';
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      latitude: null,
+      errorMessage: ''
+    };
+  }
+
+  componentDidMount() {
+    window.navigator.geolocation.getCurrentPosition(
+      (position) => this.setState({ latitude: position.coords.latitude }),
+      (err) => this.setState({ errorMessage: err.message })
+    );
+  }
+
+  render(){
+    console.log(this.state.latitude);
+    if (!this.state.latitude && this.state.errorMessage) {
+      return (<div>Error Message: {this.state.errorMessage}</div>);
+    }
+    if (this.state.latitude && !this.state.errorMessage) {
+      return (<SeasonDisplay latitude={this.state.latitude}/>);
+    }
+    return <Spinnder/>
+  }
 }
 
 export default App;
